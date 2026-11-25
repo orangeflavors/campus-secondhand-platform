@@ -1,0 +1,19 @@
+# 环境记录
+
+| 组件 | 版本/路径 |
+|---|---|
+| OS | Windows（PowerShell 7） |
+| JDK | Eclipse Temurin 21.0.8 LTS，`E:\Java\jdk-21` |
+| Maven | Apache Maven 3.9.14，`E:\apache-maven\apache-maven-3.9.14` |
+| Node.js | v26.13.0，`E:\nodejs` |
+| MySQL | 8.0.46，`127.0.0.1:3306` |
+| 事务隔离级别 | `REPEATABLE-READ`（MySQL 默认，应用未显式覆盖） |
+| 后端端口 | 18080（隔离实例，避免干扰 8080 演示实例） |
+| 隔离库 | `campus_secondhand_review` |
+
+验证命令：
+
+```sql
+SELECT VERSION(), @@transaction_isolation;
+SHOW TRIGGERS FROM campus_secondhand_review;
+```

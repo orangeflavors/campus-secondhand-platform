@@ -1,0 +1,17 @@
+{
+  "api": "http://127.0.0.1:18080/api",
+  "database": "campus_secondhand_review",
+  "stamp": "411159",
+  "results": [
+    {
+      "name": "过期请求仍可被接受（接受路径未校验 expire_at）",
+      "pass": true,
+      "detail": "order=110, expire_at 已早于当前时间"
+    },
+    {
+      "name": "接受后订单进入 DELIVERING 且过期时间仍为过去",
+      "pass": true,
+      "detail": "status=DELIVERING, expired=1"
+    }
+  ]
+}

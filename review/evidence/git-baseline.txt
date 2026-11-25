@@ -1,0 +1,14 @@
+# Git 基线记录
+
+```text
+$ git rev-parse HEAD
+8b593eada8b27c983545483a13b2311feddee079
+
+$ git log --oneline -1
+8b593ea chore: establish code-review baseline
+
+$ git branch --show-current
+review/accept-pending-order
+```
+
+说明：项目交付目录原本没有 `.git` 仓库。为使“基线提交号”可复核，本次在检查开始时初始化本地仓库，将交付快照提交为 `8b593ea`，再从该提交创建独立检查分支 `review/accept-pending-order`。基线提交不包含任何修复；检查用的数据库脚本、测试与证据只存在于检查分支。

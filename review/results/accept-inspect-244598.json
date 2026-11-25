@@ -1,0 +1,27 @@
+{
+  "api": "http://127.0.0.1:18080/api",
+  "database": "campus_secondhand_review",
+  "stamp": "244598",
+  "results": [
+    {
+      "name": "并发新请求创建成功",
+      "pass": true,
+      "detail": "http=200, id=109"
+    },
+    {
+      "name": "接受请求成功",
+      "pass": true,
+      "detail": "http=200"
+    },
+    {
+      "name": "新请求被接受事务取消为 NOT_SELECTED（FR-018/BR-19）",
+      "pass": false,
+      "detail": "a={\"status\":\"DELIVERING\",\"cancelType\":\"NULL\"}, b={\"status\":\"PENDING_SELLER\",\"cancelType\":\"NULL\"}"
+    },
+    {
+      "name": "商品仍锁定且仅一条活跃订单",
+      "pass": true,
+      "detail": "item=LOCKED"
+    }
+  ]
+}

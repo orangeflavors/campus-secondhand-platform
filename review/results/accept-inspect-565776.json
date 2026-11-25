@@ -1,0 +1,102 @@
+{
+  "api": "http://127.0.0.1:18080/api",
+  "database": "campus_secondhand_review",
+  "stamp": "565776",
+  "results": [
+    {
+      "name": "卖家接受成功并进入待线下交付",
+      "pass": true,
+      "detail": "http=200, status=DELIVERING"
+    },
+    {
+      "name": "商品同步锁定为 LOCKED",
+      "pass": true,
+      "detail": "status=LOCKED"
+    },
+    {
+      "name": "被接受请求为 DELIVERING",
+      "pass": true,
+      "detail": "status=DELIVERING"
+    },
+    {
+      "name": "其他请求均取消且类型为 NOT_SELECTED",
+      "pass": true,
+      "detail": "b=CANCELLED/NOT_SELECTED, c=CANCELLED/NOT_SELECTED"
+    },
+    {
+      "name": "未中选买家的站内通知已生成",
+      "pass": true,
+      "detail": "b=1, c=1"
+    },
+    {
+      "name": "被接受订单写入 ORDER_ACCEPT 审计",
+      "pass": true,
+      "detail": "rows=[[\"ORDER_CREATE\",\"123\"],[\"ORDER_CREATE\",\"124\"],[\"ORDER_CREATE\",\"125\"],[\"ORDER_ACCEPT\",\"123\"]]"
+    },
+    {
+      "name": "自动未中选的订单也应有状态变更审计（BR-16）",
+      "pass": false,
+      "detail": "b_noncreate_audit=0, c_noncreate_audit=0"
+    },
+    {
+      "name": "非订单卖家不能接受",
+      "pass": true,
+      "detail": "http=403, code=40303"
+    },
+    {
+      "name": "未认证用户不能接受",
+      "pass": true,
+      "detail": "http=403, code=40301"
+    },
+    {
+      "name": "封禁账号不能接受",
+      "pass": true,
+      "detail": "http=403, code=40302"
+    },
+    {
+      "name": "管理员不能代替普通卖家接受",
+      "pass": true,
+      "detail": "http=403"
+    },
+    {
+      "name": "订单卖家接受成功",
+      "pass": true,
+      "detail": "http=200"
+    },
+    {
+      "name": "重复接受返回 409 且状态不变",
+      "pass": true,
+      "detail": "http=409, code=40901"
+    },
+    {
+      "name": "并发新请求创建成功",
+      "pass": true,
+      "detail": "http=200, id=128"
+    },
+    {
+      "name": "接受请求成功",
+      "pass": true,
+      "detail": "http=200"
+    },
+    {
+      "name": "新请求被接受事务取消为 NOT_SELECTED（FR-018/BR-19）",
+      "pass": false,
+      "detail": "a={\"status\":\"DELIVERING\",\"cancelType\":\"NULL\"}, b={\"status\":\"PENDING_SELLER\",\"cancelType\":\"NULL\"}"
+    },
+    {
+      "name": "商品仍锁定且仅一条活跃订单",
+      "pass": true,
+      "detail": "item=LOCKED"
+    },
+    {
+      "name": "过期请求仍可被接受（接受路径未校验 expire_at）",
+      "pass": true,
+      "detail": "order=129, expire_at 已早于当前时间"
+    },
+    {
+      "name": "接受后订单进入 DELIVERING 且过期时间仍为过去",
+      "pass": true,
+      "detail": "status=DELIVERING, expired=1"
+    }
+  ]
+}

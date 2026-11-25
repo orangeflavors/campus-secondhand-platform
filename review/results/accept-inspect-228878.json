@@ -1,0 +1,42 @@
+{
+  "api": "http://127.0.0.1:18080/api",
+  "database": "campus_secondhand_review",
+  "stamp": "228878",
+  "results": [
+    {
+      "name": "卖家接受成功并进入待线下交付",
+      "pass": true,
+      "detail": "http=200, status=DELIVERING"
+    },
+    {
+      "name": "商品同步锁定为 LOCKED",
+      "pass": true,
+      "detail": "status=LOCKED"
+    },
+    {
+      "name": "被接受请求为 DELIVERING",
+      "pass": true,
+      "detail": "status=DELIVERING"
+    },
+    {
+      "name": "其他请求均取消且类型为 NOT_SELECTED",
+      "pass": true,
+      "detail": "b=CANCELLED/NOT_SELECTED, c=CANCELLED/NOT_SELECTED"
+    },
+    {
+      "name": "未中选买家的站内通知已生成",
+      "pass": true,
+      "detail": "b=1, c=1"
+    },
+    {
+      "name": "被接受订单写入 ORDER_ACCEPT 审计",
+      "pass": true,
+      "detail": "rows=[[\"ORDER_CREATE\",\"103\"],[\"ORDER_CREATE\",\"104\"],[\"ORDER_CREATE\",\"105\"],[\"ORDER_ACCEPT\",\"103\"]]"
+    },
+    {
+      "name": "自动未中选的订单也应有状态变更审计（BR-16）",
+      "pass": false,
+      "detail": "b_noncreate_audit=0, c_noncreate_audit=0"
+    }
+  ]
+}

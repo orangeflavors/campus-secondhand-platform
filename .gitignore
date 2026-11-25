@@ -25,3 +25,7 @@ Thumbs.db
 # 临时文件
 .tmp/
 *.tmp
+
+# 代码检查运行期文件
+review/.run/
+review/logs/
