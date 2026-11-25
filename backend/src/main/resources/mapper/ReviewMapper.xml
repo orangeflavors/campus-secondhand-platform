@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ReviewMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO review (order_id, author_id, target_id, rating, content)
+        VALUES (#{orderId}, #{authorId}, #{targetId}, #{rating}, #{content})
+    </insert>
+
+    <select id="findByOrderAndAuthor" resultType="com.campus.trade.entity.Review">
+        SELECT id, order_id, author_id, target_id, rating, content, created_at
+        FROM review
+        WHERE order_id = #{orderId} AND author_id = #{authorId}
+    </select>
+
+    <select id="listByOrder" resultType="com.campus.trade.vo.ReviewVO">
+        SELECT r.id, r.order_id, r.author_id, au.nickname AS author_nickname,
+               au.avatar_url AS author_avatar_url, r.target_id, tu.nickname AS target_nickname,
+               r.rating, r.content, r.created_at
+        FROM review r
+        JOIN sys_user au ON au.id = r.author_id
+        JOIN sys_user tu ON tu.id = r.target_id
+        WHERE r.order_id = #{orderId}
+        ORDER BY r.id
+    </select>
+
+    <select id="listByTarget" resultType="com.campus.trade.vo.ReviewVO">
+        SELECT r.id, r.order_id, r.author_id, au.nickname AS author_nickname,
+               au.avatar_url AS author_avatar_url, r.target_id, tu.nickname AS target_nickname,
+               r.rating, r.content, r.created_at
+        FROM review r
+        JOIN sys_user au ON au.id = r.author_id
+        JOIN sys_user tu ON tu.id = r.target_id
+        WHERE r.target_id = #{targetId}
+        ORDER BY r.id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByTarget" resultType="long">
+        SELECT COUNT(*) FROM review WHERE target_id = #{targetId}
+    </select>
+
+    <select id="avgRatingByTarget" resultType="double">
+        SELECT IFNULL(AVG(rating), 0) FROM review WHERE target_id = #{targetId}
+    </select>
+
+    <select id="countBetween" resultType="long">
+        SELECT COUNT(*) FROM review WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+    </select>
+
+    <select id="avgRatingBetween" resultType="double">
+        SELECT IFNULL(AVG(rating), 0) FROM review WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+    </select>
+
+</mapper>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>校园流转站 · 需求走查原型</title>
+  <style>
+    :root{--ink:#172034;--muted:#667085;--paper:#f5f7fb;--card:#fff;--line:#dfe4ec;--brand:#3157d5;--brand2:#183899;--mint:#dff7ef;--warn:#fff3d6;--danger:#c33b42;--shadow:0 12px 34px rgba(25,41,78,.10)}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+    button,input,select,textarea{font:inherit} button{cursor:pointer} .shell{min-height:100vh}.top{background:linear-gradient(120deg,#14285f,#3157d5 64%,#3b7ad9);color:#fff;padding:22px max(22px,calc((100vw - 1180px)/2));display:flex;gap:24px;align-items:center;justify-content:space-between}.brand h1{font-size:24px;margin:0 0 4px}.brand p{margin:0;color:#dce6ff}.top-actions{display:flex;gap:10px;align-items:center}.top select,.top button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:9px 12px;border-radius:10px}.top select option{color:#111}.top button:hover{background:rgba(255,255,255,.2)}
+    .layout{max-width:1180px;margin:0 auto;padding:22px;display:grid;grid-template-columns:190px 1fr;gap:20px}.nav{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;height:max-content;position:sticky;top:18px}.nav button{width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;border-radius:10px;color:var(--muted);margin:2px 0}.nav button.active{background:#eaf0ff;color:var(--brand2);font-weight:700}.nav .hint{font-size:12px;padding:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:8px}.content{min-width:0}.panel{display:none}.panel.active{display:block}.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:14px}.section-head h2{margin:0;font-size:24px}.section-head p{margin:4px 0 0;color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px}.toolbar{display:grid;grid-template-columns:minmax(180px,1fr) 160px 150px 120px;gap:10px;margin-bottom:14px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-weight:650}.field input,.field select,.field textarea,.toolbar input,.toolbar select{border:1px solid #cfd6e2;border-radius:10px;padding:10px 11px;background:#fff;color:var(--ink)}.field textarea{min-height:94px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.item{padding:0;overflow:hidden}.cover{height:120px;display:grid;place-items:center;font-size:46px;background:linear-gradient(135deg,#eaf0ff,#eefbf7)}.item-body{padding:14px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.title{font-size:16px;font-weight:750;margin:0}.price{font-size:19px;color:var(--danger);font-weight:800}.meta{color:var(--muted);font-size:13px;margin:7px 0}.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{font-size:12px;background:#eef2f8;color:#475467;border-radius:99px;padding:3px 8px}.tag.good{background:var(--mint);color:#17614b}.tag.warn{background:var(--warn);color:#815500}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:1px solid #cfd6e2;background:#fff;color:var(--ink);border-radius:10px;padding:8px 11px}.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}.btn.danger{color:var(--danger);border-color:#e5aeb1}.btn:disabled{opacity:.45;cursor:not-allowed}.empty{padding:36px;text-align:center;color:var(--muted);border:1px dashed #cfd6e2;border-radius:14px;background:#fff}
+    .split{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.stack{display:grid;gap:14px}.banner{background:#eaf0ff;border:1px solid #cad8ff;border-radius:14px;padding:14px;color:#233e91;margin-bottom:14px}.banner.warn{background:#fff6df;border-color:#efd48f;color:#75530a}.notice{position:fixed;right:22px;bottom:22px;max-width:360px;background:#172034;color:#fff;border-radius:12px;padding:12px 15px;box-shadow:var(--shadow);opacity:0;transform:translateY(12px);pointer-events:none;transition:.22s}.notice.show{opacity:1;transform:none}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:720px}.table th,.table td{text-align:left;border-bottom:1px solid var(--line);padding:11px 9px;vertical-align:top}.table th{font-size:12px;text-transform:uppercase;color:var(--muted);background:#f9fafb}.status{font-weight:700;color:var(--brand2)}.log{max-height:280px;overflow:auto;background:#101828;color:#d0d5dd;border-radius:12px;padding:13px;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat b{display:block;font-size:28px;color:var(--brand);margin-top:4px}.checklist{list-style:none;padding:0;margin:0}.checklist li{padding:11px 0;border-bottom:1px solid var(--line)}.checklist code{color:var(--brand2);font-weight:700}.muted{color:var(--muted)}.hr{height:1px;background:var(--line);margin:15px 0}.modal{position:fixed;inset:0;background:rgba(16,24,40,.5);display:none;place-items:center;padding:20px;z-index:5}.modal.show{display:grid}.modal-card{width:min(650px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;padding:20px;box-shadow:var(--shadow)}.modal h3{margin-top:0}.close{float:right}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:860px){.layout{grid-template-columns:1fr}.nav{position:static;display:flex;overflow:auto}.nav button{min-width:max-content;width:auto}.nav .hint{display:none}.grid{grid-template-columns:1fr 1fr}.toolbar,.split,.statgrid{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}.top-actions{width:100%;flex-wrap:wrap}}
+    @media(max-width:560px){.grid,.toolbar,.split,.statgrid,.two{grid-template-columns:1fr}.layout{padding:14px}.top{padding:18px}.section-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand"><h1>校园流转站</h1><p>需求走查原型 v1.0 · 数据仅在本页模拟</p></div>
+    <div class="top-actions">
+      <label for="persona">当前身份</label>
+      <select id="persona" aria-label="当前身份">
+        <option value="buyer">买家 · 林同学（已认证）</option>
+        <option value="buyer2">买家 · 李同学（已认证）</option>
+        <option value="seller">卖家 · 陈同学（已认证）</option>
+        <option value="unverified">新用户 · 周同学（未认证）</option>
+        <option value="admin">管理员 · 王老师</option>
+      </select>
+      <button id="resetBtn">重置演示数据</button>
+    </div>
+  </header>
+  <main class="layout">
+    <nav class="nav" aria-label="主导航">
+      <button class="active" data-panel="market">⌕ 发现商品</button>
+      <button data-panel="publish">＋ 发布商品</button>
+      <button data-panel="orders">⇄ 我的订单</button>
+      <button data-panel="admin">⚑ 审核与举报</button>
+      <button data-panel="stats">▥ 数据统计</button>
+      <button data-panel="validate">✓ 走查指南</button>
+      <div class="hint">提示：切换身份后再执行买家、卖家和管理员步骤。</div>
+    </nav>
+    <section class="content">
+      <div id="market" class="panel active">
+        <div class="section-head"><div><h2>发现好物</h2><p>只展示“在售”商品；支持关键词与组合筛选。</p></div><div id="marketCount" class="muted"></div></div>
+        <div class="toolbar card">
+          <input id="search" placeholder="搜索标题或描述" aria-label="搜索关键词">
+          <select id="category" aria-label="商品分类"><option value="">全部分类</option><option>教材资料</option><option>数码产品</option><option>生活用品</option><option>运动户外</option></select>
+          <select id="condition" aria-label="成色"><option value="">全部成色</option><option>几乎全新</option><option>轻微使用</option><option>明显使用</option></select>
+          <select id="sort" aria-label="排序"><option value="new">最新发布</option><option value="priceAsc">价格升序</option><option value="priceDesc">价格降序</option></select>
+        </div>
+        <div id="itemGrid" class="grid"></div>
+      </div>
+
+      <div id="publish" class="panel">
+        <div class="section-head"><div><h2>发布闲置</h2><p>对应 FR-005～FR-007、BR-01～BR-04、ST-I01/ST-I02。</p></div></div>
+        <div id="publishGuard" class="banner"></div>
+        <form id="publishForm" class="card stack">
+          <div class="two"><div class="field"><label for="pTitle">标题 *</label><input id="pTitle" maxlength="80" required placeholder="例如：高等数学教材上册"></div><div class="field"><label for="pCategory">分类 *</label><select id="pCategory" required><option value="">请选择</option><option>教材资料</option><option>数码产品</option><option>生活用品</option><option>运动户外</option></select></div></div>
+          <div class="two"><div class="field"><label for="pCondition">成色 *</label><select id="pCondition" required><option>几乎全新</option><option>轻微使用</option><option>明显使用</option></select></div><div class="field"><label for="pPrice">价格（元，0 表示免费）*</label><input id="pPrice" type="number" min="0" step="0.01" required value="20"></div></div>
+          <div class="field"><label for="pArea">交付区域 *</label><select id="pArea"><option>图书馆门口</option><option>一食堂广场</option><option>体育馆入口</option></select></div>
+          <div class="field"><label for="pDesc">描述 *</label><textarea id="pDesc" required placeholder="说明版本、使用痕迹和配件情况"></textarea></div>
+          <div class="banner warn">图片上传、内容识别和校园认证均为模拟。提交后商品进入“待审核”，不会直接在市场出现。</div>
+          <div class="actions"><button class="btn primary" type="submit">提交审核</button><button class="btn" type="button" id="saveDraft">保存草稿</button></div>
+        </form>
+      </div>
+
+      <div id="orders" class="panel">
+        <div class="section-head"><div><h2>待确认请求与订单</h2><p>平台不代管资金；请当面验货，双方分别确认。</p></div><button class="btn" id="seedOrder">创建演示请求</button></div>
+        <div class="banner warn">线下付款和交付由双方自行完成。单方确认后不能普通取消，应进入争议处理。</div>
+        <div id="orderList" class="stack"></div>
+      </div>
+
+      <div id="admin" class="panel">
+        <div class="section-head"><div><h2>审核与举报</h2><p>仅管理员可处置；必须填写依据并留下审计记录。</p></div></div>
+        <div id="adminGuard" class="banner"></div>
+        <div class="split">
+          <div class="card"><h3>待审核商品</h3><div id="reviewQueue" class="stack"></div></div>
+          <div class="card"><h3>举报处理</h3><div id="reportQueue" class="stack"></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><h3>审计事件（原型内存）</h3><div id="auditLog" class="log"></div></div>
+      </div>
+
+      <div id="stats" class="panel">
+        <div class="section-head"><div><h2>运营统计</h2><p>聚合展示，不默认暴露个人敏感明细。</p></div></div>
+        <div id="statGrid" class="statgrid"></div>
+        <div class="card" style="margin-top:16px"><h3>分类分布</h3><div id="categoryStats"></div></div>
+      </div>
+
+      <div id="validate" class="panel">
+        <div class="section-head"><div><h2>原型走查指南</h2><p>按 A 报告 PV-01～PV-04、PV-05a/PV-05b、PV-06～PV-07 操作并保存实际观察证据。</p></div></div>
+        <div class="card">
+          <ul class="checklist">
+            <li><code>PV-01</code> 买家：搜索“教材” → 选择教材资料 → 收藏。</li>
+            <li><code>PV-02</code> 卖家：发布商品 → 管理员：审核通过 → 买家：确认能搜索到。</li>
+            <li><code>PV-03</code> 买家：创建待确认请求 → 卖家：接受 → 买家/卖家依次确认 → 订单完成。</li>
+            <li><code>PV-04</code> 未认证用户：尝试发布或创建待确认请求 → 确认被拒且状态不变。</li>
+            <li><code>PV-05a</code> 两条待确认请求：接受一条后另一条未中选取消。</li>
+            <li><code>PV-05b</code> 并发接受：本原型无法验证，必须在后端实现后测试。</li>
+            <li><code>PV-06</code> 单方确认后：尝试取消 → 应提示改走争议。</li>
+            <li><code>PV-07</code> 买家：举报商品 → 管理员：判定成立并下架。</li>
+          </ul>
+          <div class="hr"></div>
+          <p><strong>证据要求：</strong>每个场景至少保存关键操作前、提示、状态结果三类截图；记录验证者、日期、输入、实际结果和问题。页面走查通过不代表后端业务已实现。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><button id="closeModal" class="btn close">关闭</button><div id="modalBody"></div></div></div>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const initialItems = [
+    {id:'I-001',title:'高等数学教材（第七版）',category:'教材资料',condition:'轻微使用',price:18,area:'图书馆门口',desc:'无缺页，少量铅笔笔记，适合大一高数课程。',status:'在售',sellerId:'s1',seller:'陈同学',emoji:'📘',created:4,favs:3},
+    {id:'I-002',title:'头戴式蓝牙耳机',category:'数码产品',condition:'几乎全新',price:88,area:'一食堂广场',desc:'配件齐全，试听正常，因更换设备闲置。',status:'在售',sellerId:'s2',seller:'赵同学',emoji:'🎧',created:3,favs:6},
+    {id:'I-003',title:'宿舍折叠收纳箱',category:'生活用品',condition:'明显使用',price:10,area:'一食堂广场',desc:'已清洁，功能正常，适合搬寝收纳。',status:'在售',sellerId:'s3',seller:'李同学',emoji:'📦',created:2,favs:1},
+    {id:'I-004',title:'羽毛球拍一对',category:'运动户外',condition:'轻微使用',price:45,area:'体育馆入口',desc:'含球拍袋，线床完好，适合日常锻炼。',status:'在售',sellerId:'s4',seller:'孙同学',emoji:'🏸',created:1,favs:2},
+    {id:'I-005',title:'线性代数学习资料',category:'教材资料',condition:'轻微使用',price:0,area:'图书馆门口',desc:'免费流转，含习题册和个人整理笔记。',status:'待审核',sellerId:'s1',seller:'陈同学',emoji:'📗',created:0,favs:0}
+  ];
+  const people={buyer:{id:'b1',name:'林同学',verified:true,role:'买家'},buyer2:{id:'b2',name:'李同学',verified:true,role:'买家'},seller:{id:'s1',name:'陈同学',verified:true,role:'卖家'},unverified:{id:'u0',name:'周同学',verified:false,role:'未认证用户'},admin:{id:'a1',name:'王老师',verified:true,role:'管理员'}};
+  const MAX_PENDING=10;
+  let items=[],orders=[],reports=[],favorites=new Set(),audit=[],persona='buyer';
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const now=()=>new Date().toLocaleString('zh-CN',{hour12:false});
+  const actor=()=>people[persona];
+  function notify(msg){const n=$('#notice');n.textContent=msg;n.classList.add('show');clearTimeout(n.t);n.t=setTimeout(()=>n.classList.remove('show'),2600)}
+  function log(action){audit.unshift(`[${now()}] ${actor().role} ${actor().name}：${action}`);renderAudit()}
+  function reset(){items=structuredClone(initialItems);orders=[];reports=[];favorites=new Set();audit=[];persona='buyer';$('#persona').value=persona;log('重置演示数据');renderAll();notify('演示数据已重置')}
+  function allowed(){return actor().verified && persona!=='admin'}
+  function guard(action){if(!actor().verified){notify(`${action}失败：请先完成校园身份认证（BR-01）`);log(`${action}被拒绝：用户未认证，业务状态保持`);return false}if(persona==='admin'){notify(`${action}失败：管理账号不参与普通交易`);return false}return true}
+  function go(id){$$('.panel').forEach(x=>x.classList.toggle('active',x.id===id));$$('.nav button[data-panel]').forEach(x=>x.classList.toggle('active',x.dataset.panel===id));if(id==='admin')renderAdmin();if(id==='orders')renderOrders();if(id==='stats')renderStats()}
+  function renderAll(){renderMarket();renderPublishGuard();renderOrders();renderAdmin();renderStats()}
+  function renderMarket(){let list=items.filter(x=>x.status==='在售');const q=$('#search').value.trim().toLowerCase(),cat=$('#category').value,cond=$('#condition').value,sort=$('#sort').value;list=list.filter(x=>(!q||(x.title+x.desc).toLowerCase().includes(q))&&(!cat||x.category===cat)&&(!cond||x.condition===cond));list.sort((a,b)=>sort==='priceAsc'?a.price-b.price:sort==='priceDesc'?b.price-a.price:b.created-a.created);$('#marketCount').textContent=`${list.length} 件在售商品`;$('#itemGrid').innerHTML=list.length?list.map(itemCard).join(''):'<div class="empty" style="grid-column:1/-1">没有符合条件的在售商品</div>'}
+  function itemCard(x){const fav=favorites.has(x.id);return `<article class="card item"><div class="cover">${x.emoji}</div><div class="item-body"><div class="row"><h3 class="title">${esc(x.title)}</h3><span class="price">${x.price===0?'免费':'¥'+x.price}</span></div><div class="meta">${esc(x.seller)} · ${esc(x.area)}</div><div class="tags"><span class="tag good">${x.status}</span><span class="tag">${esc(x.category)}</span><span class="tag">${esc(x.condition)}</span></div><div class="actions"><button class="btn" data-detail="${x.id}">查看/咨询</button><button class="btn" data-fav="${x.id}">${fav?'已收藏':'♡ 收藏'} (${x.favs})</button><button class="btn primary" data-buy="${x.id}">创建请求</button><button class="btn danger" data-report="${x.id}">举报</button></div></div></article>`}
+  function openDetail(id){const x=items.find(i=>i.id===id);$('#modalBody').innerHTML=`<h3 id="modalTitle">${x.emoji} ${esc(x.title)}</h3><p class="price">${x.price===0?'免费流转':'¥'+x.price}</p><p>${esc(x.desc)}</p><p class="muted">卖家：${esc(x.seller)}　交付区域：${esc(x.area)}　状态：${x.status}</p><div class="hr"></div><div class="field"><label for="consultMsg">商品咨询（仅双方可见）</label><textarea id="consultMsg" placeholder="例如：请问有明显划痕吗？"></textarea></div><div class="actions"><button class="btn primary" id="sendConsult">发送咨询</button></div>`;$('#modal').classList.add('show');$('#sendConsult').onclick=()=>{if(!guard('发送咨询'))return;const msg=$('#consultMsg').value.trim();if(!msg)return notify('请填写咨询内容');log(`围绕 ${id} 发送咨询：“${msg}”`);notify('咨询已发送（模拟）');$('#modal').classList.remove('show')}}
+  function toggleFav(id){if(!guard('收藏'))return;const x=items.find(i=>i.id===id);if(favorites.has(id)){favorites.delete(id);x.favs--;log(`取消收藏 ${id}`)}else{favorites.add(id);x.favs++;log(`收藏 ${id}`)}renderMarket()}
+  function buy(id){
+    if(!guard('创建待确认请求'))return;
+    const x=items.find(i=>i.id===id);
+    if(x.sellerId===actor().id)return notify('不能购买自己发布的商品（BR-05）');
+    if(x.status!=='在售')return notify('商品当前不可创建请求');
+    const accepted=orders.find(o=>o.itemId===id&&['待线下交付','买家已确认','卖家已确认','争议中'].includes(o.status));
+    if(accepted)return notify('该商品已有已接受订单，不能创建新请求');
+    const mine=orders.find(o=>o.itemId===id&&o.buyerId===actor().id&&o.status==='待卖家确认');
+    if(mine)return notify('你已提交过该商品的待确认请求，请勿重复提交（BR-19）');
+    const pending=orders.filter(o=>o.itemId===id&&o.status==='待卖家确认').length;
+    if(pending>=MAX_PENDING)return notify('该商品待确认请求已达上限，请稍后再试（BR-19）');
+    const o={id:`O-${String(orders.length+1).padStart(3,'0')}`,itemId:id,title:x.title,buyerId:actor().id,buyer:actor().name,sellerId:x.sellerId,seller:x.seller,status:'待卖家确认',buyerConfirmed:false,sellerConfirmed:false,requestedAt:Date.now(),acceptedAt:null,closedAt:null,cancelType:null};
+    orders.push(o);
+    log(`创建待确认请求 ${o.id}（不锁定商品），ST-O01`);
+    notify(`待确认请求 ${o.id} 已提交，等待卖家确认`);
+    go('orders');
+  }
+  function reportItem(id){if(!guard('提交举报'))return;const reason=prompt('请输入举报说明（原型演示，至少 4 个字）：','疑似商品信息与实际不符');if(!reason||reason.trim().length<4)return notify('举报说明不足，未创建举报');const r={id:`R-${String(reports.length+1).padStart(3,'0')}`,itemId:id,reporter:actor().name,reason:reason.trim(),status:'已提交'};reports.push(r);log(`提交举报 ${r.id}，对象 ${id}，ST-R01`);notify(`举报 ${r.id} 已提交`);renderAdmin()}
+  function renderPublishGuard(){const g=$('#publishGuard'),form=$('#publishForm');if(!actor().verified){g.className='banner warn';g.textContent='当前用户未完成校园认证：可以查看说明，但提交和保存会被拒绝。';form.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true)}else if(persona==='admin'){g.className='banner warn';g.textContent='管理员账号不代用户发布商品，请切换到买家或卖家身份。';form.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true)}else{g.className='banner';g.textContent=`已认证：${actor().name}。提交后进入“待审核”，管理员批准后才公开。`;form.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=false)}}
+  function submitItem(asDraft=false){if(!guard(asDraft?'保存草稿':'提交商品'))return;const title=$('#pTitle').value.trim(),cat=$('#pCategory').value,desc=$('#pDesc').value.trim(),price=Number($('#pPrice').value),condition=$('#pCondition').value,area=$('#pArea').value;if(!title||!cat||!desc||Number.isNaN(price)||price<0)return notify('请完整填写必填项，价格不能小于 0（BR-02）');const x={id:`I-${String(items.length+1).padStart(3,'0')}`,title,category:cat,condition,price,area,desc,status:asDraft?'草稿':'待审核',sellerId:actor().id,seller:actor().name,emoji:cat==='教材资料'?'📚':cat==='数码产品'?'⌨️':cat==='运动户外'?'🏃':'🪴',created:Date.now(),favs:0};items.push(x);log(`${asDraft?'保存草稿':'提交审核'} ${x.id}，${asDraft?'ST-I01':'ST-I01/ST-I02'}`);notify(asDraft?'草稿已保存（模拟）':'已提交审核，普通用户暂不可见');$('#publishForm').reset();$('#pPrice').value='20';renderAll()}
+  function seedOrder(){if(persona==='buyer'||persona==='buyer2'){buy('I-001')}else notify('请先切换到买家身份创建演示请求')}
+  function relevantOrders(){if(persona==='admin')return orders;return orders.filter(o=>o.buyerId===actor().id||o.sellerId===actor().id)}
+  function renderOrders(){const list=relevantOrders();$('#orderList').innerHTML=list.length?list.map(orderCard).join(''):'<div class="empty">当前身份暂无订单。可切换到买家，点击“创建待确认请求”。</div>'}
+  function orderCard(o){const isBuyer=o.buyerId===actor().id,isSeller=o.sellerId===actor().id;let buttons=[];if(isSeller&&o.status==='待卖家确认')buttons.push(`<button class="btn primary" data-order="accept" data-id="${o.id}">接受请求并锁定</button><button class="btn" data-order="reject" data-id="${o.id}">拒绝请求</button>`);if(isBuyer&&o.status==='待卖家确认')buttons.push(`<button class="btn" data-order="cancel" data-id="${o.id}">取消请求</button>`);if((isBuyer||isSeller)&&o.status==='待线下交付')buttons.push(`<button class="btn primary" data-order="confirm" data-id="${o.id}">确认我已完成交付</button><button class="btn" data-order="cancel" data-id="${o.id}">取消交易</button>`);if((isBuyer||isSeller)&&['买家已确认','卖家已确认'].includes(o.status))buttons.push(`<button class="btn primary" data-order="confirm" data-id="${o.id}">另一方确认交付</button><button class="btn danger" data-order="dispute" data-id="${o.id}">提交争议</button><button class="btn" data-order="cancel" data-id="${o.id}">尝试普通取消</button>`);if((isBuyer||isSeller)&&o.status==='已完成')buttons.push(`<button class="btn primary" data-order="review" data-id="${o.id}">评价交易</button>`);return `<article class="card"><div class="row"><div><strong>${o.id}</strong> · ${esc(o.title)}</div><span class="status">${o.status==='待卖家确认'?'待确认请求':o.status==='已取消'&&o.cancelType==='未中选'?'已取消（未中选）':o.status}</span></div><p class="muted">买家：${esc(o.buyer)}　卖家：${esc(o.seller)}　商品：${o.itemId}</p><div class="tags"><span class="tag ${o.buyerConfirmed?'good':''}">买家${o.buyerConfirmed?'已':'未'}确认</span><span class="tag ${o.sellerConfirmed?'good':''}">卖家${o.sellerConfirmed?'已':'未'}确认</span></div><div class="actions">${buttons.join('')||'<span class="muted">当前身份无可执行操作</span>'}</div></article>`}
+  function orderAction(action,id){const o=orders.find(x=>x.id===id),item=items.find(x=>x.id===o.itemId);if(action==='accept'){
+    if(o.sellerId!==actor().id)return notify('只有对应卖家可接受请求');
+    if(o.status!=='待卖家确认')return notify('该请求已失效或已处理');
+    if(item.status!=='在售')return notify('商品当前不可接受');
+    const accepted=orders.find(x=>x!==o&&x.itemId===o.itemId&&['待线下交付','买家已确认','卖家已确认','争议中'].includes(x.status));
+    if(accepted)return notify('该商品已有已接受订单，不能重复接受');
+    o.status='待线下交付';o.acceptedAt=Date.now();item.status='已锁定';
+    orders.forEach(x=>{if(x!==o&&x.itemId===o.itemId&&x.status==='待卖家确认'){x.status='已取消';x.cancelType='未中选';x.closedAt=Date.now();log(`待确认请求 ${x.id} 未中选，自动取消，ST-O04a`);notify(`买家 ${x.buyer}：商品已被其他请求锁定，你的请求已取消`)}});
+    log(`接受 ${id}，订单待线下交付、商品已锁定，ST-O02 + ST-I06`);
+  }
+    if(action==='reject'){o.status='已取消';log(`拒绝 ${id}，ST-O03`)}
+    if(action==='cancel'){if(['买家已确认','卖家已确认','争议中'].includes(o.status)){notify('普通取消被拒绝：已有交付确认，请提交争议（BR-10）');log(`取消 ${id} 被拒绝，订单状态保持 ${o.status}`);return}o.status='已取消';if(item.status==='已锁定')item.status='在售';log(`取消 ${id}，商品恢复在售，ST-O04/O06 + ST-I07`)}
+    if(action==='confirm'){if(o.buyerId===actor().id)o.buyerConfirmed=true;else if(o.sellerId===actor().id)o.sellerConfirmed=true;else return notify('只有订单双方可确认');if(o.buyerConfirmed&&o.sellerConfirmed){o.status='已完成';item.status='已售';log(`双方确认 ${id}：订单已完成、商品已售，ST-O09/O10 + ST-I08`)}else{o.status=o.buyerConfirmed?'买家已确认':'卖家已确认';log(`${actor().role}确认 ${id}，订单=${o.status}，等待另一方`)}}
+    if(action==='dispute'){o.status='争议中';log(`提交 ${id} 争议，商品保持已锁定，ST-O11`)}
+    if(action==='review'){const score=prompt('请输入 1~5 分：','5');if(!score)return;notify(`已提交 ${score} 分评价（模拟，每方一次）`);log(`评价订单 ${id}：${score} 分`)}
+    renderAll();notify(`订单 ${id} 当前状态：${o.status}`)}
+  function renderAdmin(){const ok=persona==='admin';$('#adminGuard').className=ok?'banner':'banner warn';$('#adminGuard').textContent=ok?'管理员模式：所有决定必须填写原因并写入审计。':'当前不是管理员：可以查看队列，但处置按钮被禁用。';const pending=items.filter(x=>x.status==='待审核');$('#reviewQueue').innerHTML=pending.length?pending.map(x=>`<div><div class="row"><strong>${x.id} · ${esc(x.title)}</strong><span class="tag warn">待审核</span></div><p class="muted">卖家 ${esc(x.seller)} · ¥${x.price} · ${esc(x.category)}</p><div class="actions"><button class="btn primary" ${ok?'':'disabled'} data-review="approve" data-id="${x.id}">批准</button><button class="btn danger" ${ok?'':'disabled'} data-review="reject" data-id="${x.id}">驳回</button></div></div>`).join('<div class="hr"></div>'):'<div class="empty">暂无待审核商品</div>';$('#reportQueue').innerHTML=reports.length?reports.map(r=>`<div><div class="row"><strong>${r.id} · 商品 ${r.itemId}</strong><span class="status">${r.status}</span></div><p>${esc(r.reason)}</p><p class="muted">举报人：${esc(r.reporter)}</p><div class="actions"><button class="btn danger" ${ok||r.status==='已关闭'?'':'disabled'} data-handle="uphold" data-id="${r.id}">成立并下架</button><button class="btn" ${ok||r.status==='已关闭'?'':'disabled'} data-handle="dismiss" data-id="${r.id}">不成立</button></div></div>`).join('<div class="hr"></div>'):'<div class="empty">暂无举报</div>';renderAudit()}
+  function reviewItem(action,id){if(persona!=='admin')return notify('权限不足：仅管理员可审核');const item=items.find(x=>x.id===id);const reason=prompt(action==='approve'?'请输入批准依据：':'请输入驳回原因：',action==='approve'?'信息完整，未发现违规内容':'描述不清，请补充');if(!reason)return notify('必须填写审核依据');item.status=action==='approve'?'在售':'审核驳回';log(`${action==='approve'?'批准':'驳回'}商品 ${id}：${reason}，${action==='approve'?'ST-I03':'ST-I04'}`);notify(`商品 ${id} 已${action==='approve'?'上架':'驳回'}`);renderAll()}
+  function handleReport(action,id){if(persona!=='admin')return notify('权限不足：仅管理员可处理举报');const r=reports.find(x=>x.id===id);if(r.status==='已关闭')return;const reason=prompt('请输入处置依据：',action==='uphold'?'核查证据后认定信息违规':'证据不足，不予成立');if(!reason)return notify('必须填写处置依据');r.status='已关闭';if(action==='uphold'){const item=items.find(x=>x.id===r.itemId);item.status='违规下架';log(`举报 ${id} 成立并结案；商品 ${item.id} 违规下架。依据：${reason}，ST-R05/R08 + ST-I10`)}else log(`举报 ${id} 不成立并结案。理由：${reason}，ST-R06/R08`);notify(`举报 ${id} 已处理`);renderAll()}
+  function renderAudit(){$('#auditLog').innerHTML=audit.length?audit.map(esc).join('<br>'):'暂无事件'}
+  function renderStats(){const total=items.length,onSale=items.filter(x=>x.status==='在售').length,done=orders.filter(x=>x.status==='已完成').length,openReports=reports.filter(x=>x.status!=='已关闭').length;$('#statGrid').innerHTML=[[total,'商品总量'],[onSale,'当前在售'],[done,'已完成订单'],[openReports,'待处理举报']].map(([n,t])=>`<div class="card stat"><span class="muted">${t}</span><b>${n}</b></div>`).join('');const cats={};items.forEach(x=>cats[x.category]=(cats[x.category]||0)+1);$('#categoryStats').innerHTML=Object.entries(cats).map(([k,v])=>`<p><strong>${esc(k)}</strong>：${v} 件</p>`).join('')}
+  $$('.nav button[data-panel]').forEach(b=>b.onclick=()=>go(b.dataset.panel));$('#persona').onchange=e=>{persona=e.target.value;log(`切换身份为 ${actor().role} ${actor().name}`);renderAll()};$('#resetBtn').onclick=reset;['#search','#category','#condition','#sort'].forEach(s=>$(s).addEventListener('input',renderMarket));$('#itemGrid').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.detail)openDetail(b.dataset.detail);if(b.dataset.fav)toggleFav(b.dataset.fav);if(b.dataset.buy)buy(b.dataset.buy);if(b.dataset.report)reportItem(b.dataset.report)};$('#publishForm').onsubmit=e=>{e.preventDefault();submitItem(false)};$('#saveDraft').onclick=()=>submitItem(true);$('#seedOrder').onclick=seedOrder;$('#orderList').onclick=e=>{const b=e.target.closest('[data-order]');if(b)orderAction(b.dataset.order,b.dataset.id)};$('#reviewQueue').onclick=e=>{const b=e.target.closest('[data-review]');if(b)reviewItem(b.dataset.review,b.dataset.id)};$('#reportQueue').onclick=e=>{const b=e.target.closest('[data-handle]');if(b)handleReport(b.dataset.handle,b.dataset.id)};$('#closeModal').onclick=()=>$('#modal').classList.remove('show');$('#modal').onclick=e=>{if(e.target.id==='modal')$('#modal').classList.remove('show')};
+  reset();
+  if (location.hash && document.getElementById(location.hash.slice(1))) go(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
+

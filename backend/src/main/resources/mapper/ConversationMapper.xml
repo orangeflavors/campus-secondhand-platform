@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ConversationMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO conversation (item_id, buyer_id, seller_id, last_message_at)
+        VALUES (#{itemId}, #{buyerId}, #{sellerId}, #{lastMessageAt})
+    </insert>
+
+    <select id="findById" resultType="com.campus.trade.entity.Conversation">
+        SELECT id, item_id, buyer_id, seller_id, last_message_at, created_at
+        FROM conversation WHERE id = #{id}
+    </select>
+
+    <select id="findByItemAndBuyer" resultType="com.campus.trade.entity.Conversation">
+        SELECT id, item_id, buyer_id, seller_id, last_message_at, created_at
+        FROM conversation
+        WHERE item_id = #{itemId} AND buyer_id = #{buyerId}
+        LIMIT 1
+    </select>
+
+    <select id="listByUser" resultType="com.campus.trade.vo.ConversationVO">
+        SELECT c.id,
+               c.item_id,
+               i.title AS item_title,
+               (SELECT img.url FROM item_image img WHERE img.item_id = i.id ORDER BY img.sort_no, img.id LIMIT 1) AS item_cover_url,
+               i.price AS item_price,
+               CASE WHEN c.buyer_id = #{userId} THEN c.seller_id ELSE c.buyer_id END AS other_user_id,
+               CASE WHEN c.buyer_id = #{userId} THEN su.nickname ELSE bu.nickname END AS other_nickname,
+               CASE WHEN c.buyer_id = #{userId} THEN su.avatar_url ELSE bu.avatar_url END AS other_avatar_url,
+               CASE WHEN c.buyer_id = #{userId} THEN su.auth_status ELSE bu.auth_status END AS other_auth_status,
+               (SELECT m.content FROM message m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) AS last_message,
+               c.last_message_at,
+               c.created_at
+        FROM conversation c
+        JOIN item i ON i.id = c.item_id
+        JOIN sys_user bu ON bu.id = c.buyer_id
+        JOIN sys_user su ON su.id = c.seller_id
+        WHERE c.buyer_id = #{userId} OR c.seller_id = #{userId}
+        ORDER BY COALESCE(c.last_message_at, c.created_at) DESC, c.id DESC
+    </select>
+
+    <select id="findVOById" resultType="com.campus.trade.vo.ConversationVO">
+        SELECT c.id,
+               c.item_id,
+               i.title AS item_title,
+               (SELECT img.url FROM item_image img WHERE img.item_id = i.id ORDER BY img.sort_no, img.id LIMIT 1) AS item_cover_url,
+               i.price AS item_price,
+               CASE WHEN c.buyer_id = #{userId} THEN c.seller_id ELSE c.buyer_id END AS other_user_id,
+               CASE WHEN c.buyer_id = #{userId} THEN su.nickname ELSE bu.nickname END AS other_nickname,
+               CASE WHEN c.buyer_id = #{userId} THEN su.avatar_url ELSE bu.avatar_url END AS other_avatar_url,
+               CASE WHEN c.buyer_id = #{userId} THEN su.auth_status ELSE bu.auth_status END AS other_auth_status,
+               (SELECT m.content FROM message m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) AS last_message,
+               c.last_message_at,
+               c.created_at
+        FROM conversation c
+        JOIN item i ON i.id = c.item_id
+        JOIN sys_user bu ON bu.id = c.buyer_id
+        JOIN sys_user su ON su.id = c.seller_id
+        WHERE c.id = #{id}
+    </select>
+
+    <update id="updateLastMessage">
+        UPDATE conversation SET last_message_at = #{lastMessageAt} WHERE id = #{id}
+    </update>
+
+</mapper>

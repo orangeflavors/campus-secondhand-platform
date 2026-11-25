@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: campus-trade
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:campus_secondhand}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:orange}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+  mvc:
+    throw-exception-if-no-handler-found: false
+  web:
+    resources:
+      add-mappings: true
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.campus.trade.entity,com.campus.trade.vo
+  configuration:
+    map-underscore-to-camel-case: true
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    jdbc-type-for-null: NULL
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+logging:
+  level:
+    root: INFO
+    com.campus.trade: INFO
+    # 需要排查 SQL 时可改为 DEBUG
+    com.campus.trade.mapper: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+
+app:
+  jwt:
+    # 生产环境请通过环境变量 APP_JWT_SECRET 覆盖
+    secret: ${APP_JWT_SECRET:campus-secondhand-platform-jwt-secret-key-2026-change-in-production}
+    expire-hours: 24
+  upload-dir: ${APP_UPLOAD_DIR:./uploads}
+  frontend-origin: ${APP_FRONTEND_ORIGIN:http://localhost:5173}
+  order:
+    # 待确认请求超时时间（BR-07 候选值 24 小时）
+    timeout-hours: 24
+    # 同一商品待确认请求上限（BR-19 候选值 10 条）
+    max-pending-per-item: 10
+  review:
+    # 评价窗口（BR-11 候选值 7 天）
+    window-days: 7

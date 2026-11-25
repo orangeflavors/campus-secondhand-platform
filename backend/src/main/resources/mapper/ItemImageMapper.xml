@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ItemImageMapper">
+
+    <insert id="insertBatch">
+        INSERT INTO item_image (item_id, url, sort_no) VALUES
+        <foreach collection="images" item="img" separator=",">
+            (#{img.itemId}, #{img.url}, #{img.sortNo})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByItemId">
+        DELETE FROM item_image WHERE item_id = #{itemId}
+    </delete>
+
+    <select id="findByItemId" resultType="com.campus.trade.entity.ItemImage">
+        SELECT id, item_id, url, sort_no, created_at
+        FROM item_image
+        WHERE item_id = #{itemId}
+        ORDER BY sort_no, id
+    </select>
+
+    <select id="findByItemIds" resultType="com.campus.trade.entity.ItemImage">
+        SELECT id, item_id, url, sort_no, created_at
+        FROM item_image
+        WHERE item_id IN
+        <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">#{itemId}</foreach>
+        ORDER BY item_id, sort_no, id
+    </select>
+
+</mapper>

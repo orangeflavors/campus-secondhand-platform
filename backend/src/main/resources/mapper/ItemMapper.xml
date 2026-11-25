@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ItemMapper">
+
+    <sql id="itemColumns">
+        id, seller_id, title, category_id, item_condition, description, price, handover_area,
+        status, reject_reason, audit_by, audit_at, listed_at, view_count, favorite_count,
+        created_at, updated_at, version
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO item (seller_id, title, category_id, item_condition, description, price,
+                          handover_area, status, listed_at)
+        VALUES (#{sellerId}, #{title}, #{categoryId}, #{itemCondition}, #{description}, #{price},
+                #{handoverArea}, #{status}, #{listedAt})
+    </insert>
+
+    <update id="update">
+        UPDATE item
+        SET title = #{title},
+            category_id = #{categoryId},
+            item_condition = #{itemCondition},
+            description = #{description},
+            price = #{price},
+            handover_area = #{handoverArea},
+            status = #{status},
+            reject_reason = #{rejectReason},
+            listed_at = #{listedAt},
+            version = version + 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="findById" resultType="com.campus.trade.entity.Item">
+        SELECT <include refid="itemColumns"/> FROM item WHERE id = #{id}
+    </select>
+
+    <select id="findByIdForUpdate" resultType="com.campus.trade.entity.Item">
+        SELECT <include refid="itemColumns"/> FROM item WHERE id = #{id} FOR UPDATE
+    </select>
+
+    <select id="findByIds" resultType="com.campus.trade.entity.Item">
+        SELECT <include refid="itemColumns"/> FROM item
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </select>
+
+    <update id="updateStatus">
+        UPDATE item
+        SET status = #{status},
+            reject_reason = #{rejectReason},
+            audit_by = #{auditBy},
+            audit_at = #{auditAt},
+            listed_at = #{listedAt},
+            version = version + 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="increaseViewCount">
+        UPDATE item SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <update id="updateFavoriteCount">
+        UPDATE item
+        SET favorite_count = GREATEST(0, favorite_count + #{delta})
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM item WHERE id = #{id}
+    </delete>
+
+    <sql id="cardSelect">
+        SELECT i.id,
+               i.title,
+               (SELECT img.url FROM item_image img WHERE img.item_id = i.id ORDER BY img.sort_no, img.id LIMIT 1) AS cover_url,
+               i.price,
+               i.item_condition AS `condition`,
+               i.category_id,
+               c.name AS category_name,
+               i.handover_area,
+               i.status,
+               i.seller_id,
+               u.nickname AS seller_nickname,
+               u.auth_status AS seller_auth_status,
+               i.listed_at,
+               i.created_at,
+               i.view_count,
+               i.favorite_count
+        FROM item i
+        JOIN category c ON c.id = i.category_id
+        JOIN sys_user u ON u.id = i.seller_id
+    </sql>
+
+    <sql id="searchCondition">
+        <where>
+            AND i.status = 'ON_SALE'
+            <if test="keyword != null and keyword != ''">
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!'
+                     OR i.description LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!')
+            </if>
+            <if test="categoryId != null">
+                AND i.category_id = #{categoryId}
+            </if>
+            <if test="minPrice != null">
+                AND i.price &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                AND i.price &lt;= #{maxPrice}
+            </if>
+            <if test="condition != null and condition != ''">
+                AND i.item_condition = #{condition}
+            </if>
+            <if test="area != null and area != ''">
+                AND i.handover_area = #{area}
+            </if>
+        </where>
+    </sql>
+
+    <select id="search" resultType="com.campus.trade.vo.ItemCardVO">
+        <include refid="cardSelect"/>
+        <include refid="searchCondition"/>
+        <choose>
+            <when test="sort == 'price_asc'">ORDER BY i.price ASC, i.id DESC</when>
+            <when test="sort == 'price_desc'">ORDER BY i.price DESC, i.id DESC</when>
+            <otherwise>ORDER BY i.listed_at DESC, i.id DESC</otherwise>
+        </choose>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countSearch" resultType="long">
+        SELECT COUNT(*)
+        FROM item i
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="findBySeller" resultType="com.campus.trade.vo.ItemCardVO">
+        <include refid="cardSelect"/>
+        <where>
+            AND i.seller_id = #{sellerId}
+            <if test="status != null and status != ''">
+                AND i.status = #{status}
+            </if>
+        </where>
+        ORDER BY i.updated_at DESC, i.id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countBySeller" resultType="long">
+        SELECT COUNT(*) FROM item
+        WHERE seller_id = #{sellerId}
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <select id="findFavorites" resultType="com.campus.trade.vo.ItemCardVO">
+        <include refid="cardSelect"/>
+        JOIN favorite f ON f.item_id = i.id AND f.user_id = #{userId}
+        ORDER BY f.created_at DESC, i.id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countFavorites" resultType="long">
+        SELECT COUNT(*) FROM favorite WHERE user_id = #{userId}
+    </select>
+
+    <select id="findCardById" resultType="com.campus.trade.vo.ItemCardVO">
+        <include refid="cardSelect"/>
+        WHERE i.id = #{id}
+    </select>
+
+    <select id="adminSearch" resultType="com.campus.trade.vo.AdminItemVO">
+        SELECT i.id,
+               i.title,
+               (SELECT img.url FROM item_image img WHERE img.item_id = i.id ORDER BY img.sort_no, img.id LIMIT 1) AS cover_url,
+               i.price,
+               c.name AS category_name,
+               i.seller_id,
+               u.nickname AS seller_nickname,
+               u.auth_status AS seller_auth_status,
+               i.status,
+               i.reject_reason,
+               i.description,
+               i.created_at,
+               i.audit_at,
+               i.listed_at
+        FROM item i
+        JOIN category c ON c.id = i.category_id
+        JOIN sys_user u ON u.id = i.seller_id
+        <where>
+            <if test="status != null and status != ''">
+                AND i.status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!'
+                     OR u.nickname LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!')
+            </if>
+        </where>
+        ORDER BY i.created_at DESC, i.id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="adminCount" resultType="long">
+        SELECT COUNT(*)
+        FROM item i
+        JOIN sys_user u ON u.id = i.seller_id
+        <where>
+            <if test="status != null and status != ''">
+                AND i.status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (i.title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!'
+                     OR u.nickname LIKE CONCAT('%', #{keyword}, '%') ESCAPE '!')
+            </if>
+        </where>
+    </select>
+
+    <select id="findAdminById" resultType="com.campus.trade.vo.AdminItemVO">
+        SELECT i.id,
+               i.title,
+               (SELECT img.url FROM item_image img WHERE img.item_id = i.id ORDER BY img.sort_no, img.id LIMIT 1) AS cover_url,
+               i.price,
+               c.name AS category_name,
+               i.seller_id,
+               u.nickname AS seller_nickname,
+               u.auth_status AS seller_auth_status,
+               i.status,
+               i.reject_reason,
+               i.description,
+               i.created_at,
+               i.audit_at,
+               i.listed_at
+        FROM item i
+        JOIN category c ON c.id = i.category_id
+        JOIN sys_user u ON u.id = i.seller_id
+        WHERE i.id = #{id}
+    </select>
+
+    <select id="countByStatus" resultType="long">
+        SELECT COUNT(*) FROM item WHERE status = #{status}
+    </select>
+
+    <select id="countCreatedBetween" resultType="long">
+        SELECT COUNT(*) FROM item WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+    </select>
+
+    <select id="countByCategoryBetween" resultType="java.util.Map">
+        SELECT c.name AS name, COUNT(*) AS count
+        FROM item i
+        JOIN category c ON c.id = i.category_id
+        WHERE i.created_at &gt;= #{from} AND i.created_at &lt; #{to}
+        GROUP BY c.id, c.name
+        ORDER BY COUNT(*) DESC
+    </select>
+
+</mapper>

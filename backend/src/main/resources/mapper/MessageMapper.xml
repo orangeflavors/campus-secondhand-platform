@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.MessageMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message (conversation_id, sender_id, content)
+        VALUES (#{conversationId}, #{senderId}, #{content})
+    </insert>
+
+    <select id="findById" resultType="com.campus.trade.entity.Message">
+        SELECT id, conversation_id, sender_id, content, created_at FROM message WHERE id = #{id}
+    </select>
+
+    <select id="listByConversation" resultType="com.campus.trade.vo.MessageVO">
+        SELECT m.id,
+               m.conversation_id,
+               m.sender_id,
+               u.nickname AS sender_nickname,
+               u.avatar_url AS sender_avatar_url,
+               m.content,
+               (m.sender_id = #{currentUserId}) AS mine,
+               m.created_at
+        FROM message m
+        JOIN sys_user u ON u.id = m.sender_id
+        WHERE m.conversation_id = #{conversationId}
+        <if test="afterId != null">
+            AND m.id &gt; #{afterId}
+        </if>
+        ORDER BY m.id ASC
+        LIMIT 500
+    </select>
+
+</mapper>

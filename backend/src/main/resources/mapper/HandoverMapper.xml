@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.HandoverMapper">
+
+    <select id="findByOrderId" resultType="com.campus.trade.entity.HandoverRecord">
+        SELECT id, order_id, handover_time, area, note, buyer_confirmed_at, seller_confirmed_at,
+               updated_by, created_at, updated_at
+        FROM handover_record
+        WHERE order_id = #{orderId}
+    </select>
+
+    <select id="findByOrderIds" resultType="com.campus.trade.entity.HandoverRecord">
+        SELECT id, order_id, handover_time, area, note, buyer_confirmed_at, seller_confirmed_at,
+               updated_by, created_at, updated_at
+        FROM handover_record
+        WHERE order_id IN
+        <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">#{orderId}</foreach>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO handover_record (order_id, handover_time, area, note, updated_by)
+        VALUES (#{orderId}, #{handoverTime}, #{area}, #{note}, #{updatedBy})
+    </insert>
+
+    <update id="update">
+        UPDATE handover_record
+        <set>
+            <if test="handoverTime != null">handover_time = #{handoverTime},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="note != null">note = #{note},</if>
+            <if test="buyerConfirmedAt != null">buyer_confirmed_at = #{buyerConfirmedAt},</if>
+            <if test="sellerConfirmedAt != null">seller_confirmed_at = #{sellerConfirmedAt},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            updated_at = NOW()
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
+
+    <insert id="insertLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO handover_log (order_id, changed_by, summary)
+        VALUES (#{orderId}, #{changedBy}, #{summary})
+    </insert>
+
+    <select id="listLogs" resultType="com.campus.trade.vo.HandoverLogVO">
+        SELECT l.id, l.changed_by, u.nickname AS changed_by_name, l.summary, l.created_at
+        FROM handover_log l
+        JOIN sys_user u ON u.id = l.changed_by
+        WHERE l.order_id = #{orderId}
+        ORDER BY l.id DESC
+    </select>
+
+</mapper>

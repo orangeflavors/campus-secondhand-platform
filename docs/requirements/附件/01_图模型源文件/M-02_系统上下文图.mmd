@@ -1,0 +1,20 @@
+%% M-02 系统上下文图
+%% 建模对象：平台系统边界、外部角色与系统
+%% 关联：SCOPE-01，FR-001~FR-033
+flowchart LR
+    Visitor[游客]
+    User[已认证校园用户\n买家/卖家]
+    Admin[管理员]
+    Auth[校园身份认证服务]
+    Notify[通知服务]
+    Filter[内容初筛服务\n可选]
+    subgraph SYS[校园二手交易与物品流转平台]
+      Core[认证、商品、搜索、咨询、订单、交付、评价、举报、统计]
+    end
+    Visitor -->|注册/登录/查看规则| Core
+    User <-->|发布、搜索、咨询、交易、评价、举报| Core
+    Admin <-->|审核、处置、封禁、统计、审计| Core
+    Core <-->|认证请求/结果| Auth
+    Core -->|站内/外部通知| Notify
+    Core <-->|文本图片初筛/风险标签| Filter
+

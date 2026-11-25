@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ReportMapper">
+
+    <sql id="reportColumns">
+        id, report_no, reporter_id, target_type, target_id, category, description, snapshot, status,
+        handler_id, handling_result, rule_basis, action_summary, appeal_reason, claimed_at,
+        handled_at, created_at, updated_at, version
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO report (report_no, reporter_id, target_type, target_id, category, description, snapshot, status)
+        VALUES (#{reportNo}, #{reporterId}, #{targetType}, #{targetId}, #{category}, #{description}, #{snapshot}, #{status})
+    </insert>
+
+    <select id="findById" resultType="com.campus.trade.entity.Report">
+        SELECT <include refid="reportColumns"/> FROM report WHERE id = #{id}
+    </select>
+
+    <select id="findByIdForUpdate" resultType="com.campus.trade.entity.Report">
+        SELECT <include refid="reportColumns"/> FROM report WHERE id = #{id} FOR UPDATE
+    </select>
+
+    <update id="update">
+        UPDATE report
+        <set>
+            status = #{status},
+            <if test="handlerId != null">handler_id = #{handlerId},</if>
+            <if test="handlingResult != null">handling_result = #{handlingResult},</if>
+            <if test="ruleBasis != null">rule_basis = #{ruleBasis},</if>
+            <if test="actionSummary != null">action_summary = #{actionSummary},</if>
+            <if test="appealReason != null">appeal_reason = #{appealReason},</if>
+            <if test="claimedAt != null">claimed_at = #{claimedAt},</if>
+            <if test="handledAt != null">handled_at = #{handledAt},</if>
+            version = version + 1,
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id} AND version = #{version}
+    </update>
+
+    <select id="listMine" resultType="com.campus.trade.entity.Report">
+        SELECT <include refid="reportColumns"/> FROM report
+        WHERE reporter_id = #{reporterId}
+        ORDER BY id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countMine" resultType="long">
+        SELECT COUNT(*) FROM report WHERE reporter_id = #{reporterId}
+    </select>
+
+    <select id="listAdmin" resultType="com.campus.trade.entity.Report">
+        SELECT <include refid="reportColumns"/> FROM report
+        <where>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY
+            CASE status WHEN 'SUBMITTED' THEN 0 WHEN 'PROCESSING' THEN 1 WHEN 'PENDING_APPEAL' THEN 2 ELSE 3 END,
+            id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countAdmin" resultType="long">
+        SELECT COUNT(*) FROM report
+        <where>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="countCreatedBetween" resultType="long">
+        SELECT COUNT(*) FROM report WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+    </select>
+
+    <select id="countByStatusBetween" resultType="java.util.Map">
+        SELECT status, COUNT(*) AS count
+        FROM report
+        WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+        GROUP BY status
+    </select>
+
+</mapper>

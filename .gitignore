@@ -1,0 +1,27 @@
+# 构建产物
+backend/target/
+frontend/dist/
+
+# 依赖与缓存
+frontend/node_modules/
+frontend/.pnpm-store/
+.pnpm-store/
+.m2repo/
+.mvn-repo/
+
+# 运行期数据
+backend/uploads/
+uploads/
+backend/target/run.log
+*.log
+
+# IDE 与系统
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# 临时文件
+.tmp/
+*.tmp

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <defs>
+    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f9eef2"/>
+      <stop offset="1" stop-color="#efc9d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" fill="url(#g5)"/>
+  <circle cx="520" cy="100" r="70" fill="#ffffff" opacity="0.45"/>
+  <circle cx="120" cy="400" r="80" fill="#ffffff" opacity="0.35"/>
+  <g fill="#ffffff" opacity="0.92">
+    <path d="M320 140 C270 140 240 185 250 235 L270 330 C274 352 300 365 320 365 C340 365 366 352 370 330 L390 235 C400 185 370 140 320 140 Z"/>
+    <rect x="300" y="120" width="40" height="30" rx="6" fill="#be185d" opacity="0.3"/>
+    <path d="M250 235 L200 260 L215 290 L265 270 Z" fill="#be185d" opacity="0.22"/>
+    <path d="M390 235 L440 260 L425 290 L375 270 Z" fill="#be185d" opacity="0.22"/>
+  </g>
+  <text x="320" y="430" text-anchor="middle" font-family="'Microsoft YaHei', sans-serif" font-size="26" fill="#9d174d" opacity="0.75">服装鞋帽</text>
+</svg>

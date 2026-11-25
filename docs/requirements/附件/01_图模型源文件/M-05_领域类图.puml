@@ -1,0 +1,79 @@
+@startuml
+title M-05 核心领域类图
+hide methods
+class User {
+  user_id
+  nickname
+  verification_status
+  account_status
+}
+class CampusVerification {
+  verification_id
+  method
+  result
+  verified_at
+}
+class Item {
+  item_id
+  title
+  category
+  condition
+  price
+  status
+  version
+}
+class ItemImage { image_id; url; sequence }
+class Favorite { created_at }
+class Consultation { conversation_id; status }
+class Message { message_id; content; sent_at }
+class Order {
+  order_id
+  status
+  version
+  cancel_reason
+  cancel_type
+  requested_at
+  accepted_at
+  closed_at
+}
+class HandoverRecord {
+  handover_id
+  agreed_time
+  area
+  buyer_confirmed_at
+  seller_confirmed_at
+}
+class Review { review_id; rating; content }
+class Report { report_id; target_type; target_id; status }
+class ModerationAction { action_id; action_type; reason; start_at; end_at }
+class AuditLog { log_id; action; before_value; after_value; occurred_at }
+class Notification { notification_id; type; send_status; read_at }
+User "1" -- "0..1" CampusVerification
+User "1 seller" -- "0..*" Item
+Item "1" -- "1..*" ItemImage
+User "1" -- "0..*" Favorite
+Item "1" -- "0..*" Favorite
+Item "1" -- "0..*" Consultation
+Consultation "1" -- "0..*" Message
+User "1" -- "0..*" Message : sends
+Item "1" -- "0..*" Order : history\n≤10 pending, ≤1 accepted active
+User "1 buyer" -- "0..*" Order
+User "1 seller" -- "0..*" Order
+note right of Order
+  待卖家确认 = 待确认请求，不锁定商品；
+  活跃订单 = 待线下交付/买家已确认/卖家已确认/争议中；
+  同商品 ≤1 个已接受且未终结订单，≤10 条待确认请求。
+end note
+Order "1" -- "0..1" HandoverRecord
+Order "1" -- "0..2" Review
+User "1" -- "0..*" Review : writes
+User "1" -- "0..*" Report : submits
+Report "1" -- "0..*" ModerationAction
+User "1 admin" -- "0..*" ModerationAction
+User "1" -- "0..*" Notification
+AuditLog ..> Item
+AuditLog ..> Order
+AuditLog ..> Report
+AuditLog ..> ModerationAction
+@enduml
+

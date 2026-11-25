@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.FavoriteMapper">
+
+    <insert id="insert">
+        INSERT IGNORE INTO favorite (user_id, item_id)
+        VALUES (#{userId}, #{itemId})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM favorite WHERE user_id = #{userId} AND item_id = #{itemId}
+    </delete>
+
+    <select id="exists" resultType="int">
+        SELECT COUNT(*) FROM favorite WHERE user_id = #{userId} AND item_id = #{itemId}
+    </select>
+
+</mapper>

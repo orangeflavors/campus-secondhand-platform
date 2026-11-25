@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.NotificationMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notification (user_id, type, title, content, related_type, related_id,
+                                  read_flag, send_status, retry_count)
+        VALUES (#{userId}, #{type}, #{title}, #{content}, #{relatedType}, #{relatedId},
+                #{readFlag}, #{sendStatus}, #{retryCount})
+    </insert>
+
+    <select id="list" resultType="com.campus.trade.vo.NotificationVO">
+        SELECT id, type, title, content, related_type, related_id, (read_flag = 1) AS `read`, created_at
+        FROM notification
+        WHERE user_id = #{userId}
+        <if test="unread">
+            AND read_flag = 0
+        </if>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM notification
+        WHERE user_id = #{userId}
+        <if test="unread">
+            AND read_flag = 0
+        </if>
+    </select>
+
+    <select id="countUnread" resultType="long">
+        SELECT COUNT(*) FROM notification WHERE user_id = #{userId} AND read_flag = 0
+    </select>
+
+    <update id="markRead">
+        UPDATE notification
+        SET read_flag = 1, read_at = #{readAt}
+        WHERE id = #{id} AND user_id = #{userId} AND read_flag = 0
+    </update>
+
+    <update id="markAllRead">
+        UPDATE notification
+        SET read_flag = 1, read_at = #{readAt}
+        WHERE user_id = #{userId} AND read_flag = 0
+    </update>
+
+</mapper>

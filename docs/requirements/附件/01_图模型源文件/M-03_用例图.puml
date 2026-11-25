@@ -1,0 +1,55 @@
+@startuml
+title M-03 校园二手交易与物品流转平台用例图
+left to right direction
+actor 游客
+actor "未认证注册用户" as Unverified
+actor "已认证校园用户" as User
+actor 买家
+actor 卖家
+actor 管理员
+actor "校园身份认证服务" as Auth
+User <|-- 买家
+User <|-- 卖家
+rectangle "校园二手交易与物品流转平台" {
+  usecase "UC-01 注册与校园认证" as UC01
+  usecase "UC-02 发布商品" as UC02
+  usecase "UC-03 审核商品" as UC03
+  usecase "UC-04 搜索筛选" as UC04
+  usecase "UC-05 收藏" as UC05
+  usecase "UC-06 商品咨询" as UC06
+  usecase "UC-07 创建订单" as UC07
+  usecase "UC-08 接受/拒绝订单" as UC08
+  usecase "UC-09 取消订单" as UC09
+  usecase "UC-10 线下交付确认" as UC10
+  usecase "UC-11 交易评价" as UC11
+  usecase "UC-12 提交/查看举报" as UC12
+  usecase "UC-13 举报与账户处置" as UC13
+  usecase "UC-14 查看运营统计" as UC14
+  usecase "UC-15 查看历史和通知" as UC15
+}
+游客 --> UC01
+Unverified --> UC01
+Auth --> UC01
+卖家 --> UC02
+管理员 --> UC03
+买家 --> UC04
+买家 --> UC05
+买家 --> UC06
+卖家 --> UC06
+买家 --> UC07
+卖家 --> UC08
+买家 --> UC09
+卖家 --> UC09
+买家 --> UC10
+卖家 --> UC10
+买家 --> UC11
+卖家 --> UC11
+User --> UC12
+管理员 --> UC13
+管理员 --> UC14
+User --> UC15
+UC07 .> UC04 : <<include>>
+UC10 .> UC08 : <<include>>
+UC11 .> UC10 : <<extend>> 完成后
+@enduml
+

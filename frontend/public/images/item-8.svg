@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480">
+  <defs>
+    <linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6f0ef"/>
+      <stop offset="1" stop-color="#e2cfc9"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" fill="url(#g8)"/>
+  <circle cx="110" cy="390" r="85" fill="#ffffff" opacity="0.4"/>
+  <circle cx="530" cy="100" r="70" fill="#ffffff" opacity="0.45"/>
+  <g>
+    <rect x="190" y="180" width="260" height="150" rx="14" fill="#ffffff" opacity="0.92"/>
+    <circle cx="250" cy="255" r="45" fill="#dc2626" opacity="0.18"/>
+    <circle cx="390" cy="255" r="45" fill="#dc2626" opacity="0.18"/>
+    <rect x="300" y="240" width="40" height="30" rx="8" fill="#dc2626" opacity="0.35"/>
+    <rect x="250" y="330" width="140" height="14" rx="7" fill="#991b1b" opacity="0.35"/>
+  </g>
+  <text x="320" y="430" text-anchor="middle" font-family="'Microsoft YaHei', sans-serif" font-size="26" fill="#7f1d1d" opacity="0.7">闲置物品</text>
+</svg>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.trade.mapper.ModerationActionMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO moderation_action (target_type, target_id, action_type, operator_id, reason,
+                                       rule_basis, duration_days, effective_from, effective_to, related_report_id)
+        VALUES (#{targetType}, #{targetId}, #{actionType}, #{operatorId}, #{reason},
+                #{ruleBasis}, #{durationDays}, #{effectiveFrom}, #{effectiveTo}, #{relatedReportId})
+    </insert>
+
+    <select id="listByTarget" resultType="com.campus.trade.vo.ModerationActionVO">
+        SELECT a.id, a.target_type, a.target_id, a.action_type, a.reason, a.rule_basis,
+               a.duration_days, u.nickname AS operator_name, a.effective_from, a.effective_to,
+               a.created_at
+        FROM moderation_action a
+        JOIN sys_user u ON u.id = a.operator_id
+        WHERE a.target_type = #{targetType} AND a.target_id = #{targetId}
+        ORDER BY a.id DESC
+    </select>
+
+    <select id="countBetween" resultType="long">
+        SELECT COUNT(*) FROM moderation_action
+        WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+    </select>
+
+    <select id="countByTypeBetween" resultType="java.util.Map">
+        SELECT action_type AS action_type, COUNT(*) AS count
+        FROM moderation_action
+        WHERE created_at &gt;= #{from} AND created_at &lt; #{to}
+        GROUP BY action_type
+    </select>
+
+</mapper>
