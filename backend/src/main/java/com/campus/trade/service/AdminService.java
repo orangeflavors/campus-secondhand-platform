@@ -42,6 +42,7 @@ public class AdminService {
             Map.entry("ORDER_ACCEPT", "接受待确认请求"),
             Map.entry("ORDER_REJECT", "拒绝待确认请求"),
             Map.entry("ORDER_CANCEL", "取消订单"),
+            Map.entry("ORDER_NOT_SELECTED", "待确认请求未中选"),
             Map.entry("ORDER_CONFIRM", "确认交付"),
             Map.entry("ORDER_COMPLETE", "订单完成"),
             Map.entry("ORDER_DISPUTE", "提交交易争议"),

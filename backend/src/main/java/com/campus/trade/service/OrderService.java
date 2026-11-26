@@ -164,7 +164,11 @@ public class OrderService {
             other.setCancelType(TradeConst.CANCEL_NOT_SELECTED);
             other.setCancelReason("卖家已接受其他买家的请求，本请求未中选");
             other.setClosedAt(now);
-            orderMapper.update(other);
+            if (orderMapper.update(other) == 0) {
+                continue;
+            }
+            auditService.log("ORDER_NOT_SELECTED", "ORDER", other.getId(), other.getCancelReason(),
+                    TradeConst.ORDER_PENDING_SELLER, TradeConst.ORDER_CANCELLED);
             notificationService.send(other.getBuyerId(), TradeConst.NOTIFY_ORDER, "待确认请求未中选",
                     "你申请的商品《" + item.getTitle() + "》已被其他买家抢先达成交易，本次请求未中选。",
                     "ORDER", other.getId());
