@@ -23,7 +23,7 @@ public interface OrderMapper {
 
     TradeOrder findPendingByItemAndBuyer(@Param("itemId") Long itemId, @Param("buyerId") Long buyerId);
 
-    List<TradeOrder> findOtherPending(@Param("itemId") Long itemId, @Param("excludeId") Long excludeId);
+    List<TradeOrder> findOtherPendingForUpdate(@Param("itemId") Long itemId, @Param("excludeId") Long excludeId);
 
     long countPendingByItem(Long itemId);
 

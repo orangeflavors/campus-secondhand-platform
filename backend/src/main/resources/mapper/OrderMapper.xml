@@ -41,10 +41,11 @@
         LIMIT 1
     </select>
 
-    <select id="findOtherPending" resultType="com.campus.trade.entity.TradeOrder">
+    <select id="findOtherPendingForUpdate" resultType="com.campus.trade.entity.TradeOrder">
         SELECT <include refid="orderColumns"/> FROM trade_order
         WHERE item_id = #{itemId} AND status = 'PENDING_SELLER' AND id &lt;&gt; #{excludeId}
         ORDER BY id
+        FOR UPDATE
     </select>
 
     <select id="countPendingByItem" resultType="long">

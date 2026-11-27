@@ -158,8 +158,8 @@ public class OrderService {
         handover.setUpdatedBy(sellerId);
         handoverMapper.insert(handover);
 
-        // 同商品其他待确认请求 → 已取消（未中选）并通知（ST-O04a / BR-19）
-        for (TradeOrder other : orderMapper.findOtherPending(item.getId(), orderId)) {
+        // 用锁定读取得商品加锁前已提交的请求，避免沿用事务开始时的快照。
+        for (TradeOrder other : orderMapper.findOtherPendingForUpdate(item.getId(), orderId)) {
             other.setStatus(TradeConst.ORDER_CANCELLED);
             other.setCancelType(TradeConst.CANCEL_NOT_SELECTED);
             other.setCancelReason("卖家已接受其他买家的请求，本请求未中选");

@@ -213,6 +213,10 @@ async function scenarioSnapshotRace() {
       byId.get(String(bId))?.status === 'CANCELLED' && byId.get(String(bId))?.cancelType === 'NOT_SELECTED',
       `a=${JSON.stringify(byId.get(String(a)))}, b=${JSON.stringify(byId.get(String(bId)))}`)
 
+    const notifications = await notificationsOf(buyer02.token)
+    record('并发新请求的买家收到未中选通知',
+      notifications.some((n) => n.relatedType === 'ORDER' && n.relatedId === bId && n.title.includes('未中选')))
+
     const item = sql(`SELECT status FROM item WHERE id=${itemId}`)
     record('商品仍锁定且仅一条活跃订单',
       item[0]?.[0] === 'LOCKED' && sql(`SELECT COUNT(*) FROM trade_order WHERE item_id=${itemId} AND status IN ('DELIVERING','BUYER_CONFIRMED','SELLER_CONFIRMED','DISPUTE')`)[0][0] === '1',
