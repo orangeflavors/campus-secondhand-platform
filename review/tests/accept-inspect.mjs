@@ -227,27 +227,32 @@ async function scenarioSnapshotRace() {
 }
 
 async function scenarioExpired() {
-  console.log('\n[4] 过期请求在接受时是否仍被检查')
-  let accepted = null
-  let itemId = null
-  let orderId = null
-  for (let attempt = 0; attempt < 3 && !accepted; attempt += 1) {
-    itemId = await createItem(`过期检查 ${stamp}-${attempt}`)
-    orderId = await createOrder(buyer01.token, itemId)
+  console.log('\n[4] 定时任务处理前，接受接口也拒绝过期请求')
+  const expiredMessage = '该请求已超时，无法接受'
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const itemId = await createItem(`过期检查 ${stamp}-${attempt}`)
+    const orderId = await createOrder(buyer01.token, itemId)
     sql(`UPDATE trade_order SET expire_at = DATE_SUB(NOW(), INTERVAL 1 MINUTE) WHERE id=${orderId}`)
     const res = await request('POST', `/orders/${orderId}/accept`, { token: seller.token })
-    if (res.status === 200) accepted = res
-    else console.log(`  · 第 ${attempt + 1} 次被定时任务抢先取消（http=${res.status}），重试`)
+    const [[status, cancelType, acceptedAt, itemStatus, handoverCount]] = sql(`
+      SELECT o.status, o.cancel_type, o.accepted_at, i.status,
+        (SELECT COUNT(*) FROM handover_record WHERE order_id = o.id)
+      FROM trade_order o JOIN item i ON i.id = o.item_id WHERE o.id = ${orderId}`)
+    const timedOut = status === 'CANCELLED' && cancelType === 'TIMEOUT'
+    if (res.status === 409 && res.body?.message !== expiredMessage && timedOut) {
+      console.log(`  · 第 ${attempt + 1} 次被定时任务先取消，重试`)
+      continue
+    }
+
+    record('卖家接受过期请求时收到明确的超时提示',
+      res.status === 409 && res.body?.code === 40901 && res.body?.message === expiredMessage,
+      `http=${res.status}, code=${res.body?.code}, message=${res.body?.message}`)
+    record('过期请求没有被接受，商品仍在售且没有交付记录',
+      (status === 'PENDING_SELLER' || timedOut) && acceptedAt === 'NULL' && itemStatus === 'ON_SALE' && handoverCount === '0',
+      `order=${status}, item=${itemStatus}, handovers=${handoverCount}`)
+    return
   }
-  record('过期请求仍可被接受（接受路径未校验 expire_at）', accepted !== null,
-    accepted ? `order=${orderId}, expire_at 已早于当前时间` : '三次均被定时任务取消')
-  if (accepted) {
-    const rows = sql(`SELECT status, expire_at < NOW() FROM trade_order WHERE id=${orderId}`)
-    record('接受后订单进入 DELIVERING 且过期时间仍为过去', rows[0]?.[0] === 'DELIVERING' && rows[0]?.[1] === '1',
-      `status=${rows[0]?.[0]}, expired=${rows[0]?.[1]}`)
-    // 清理：待交付且无人确认，买家可以取消并恢复商品。
-    await request('POST', `/orders/${orderId}/cancel`, { token: buyer01.token, body: { reason: '检查结束清理' } })
-  }
+  record('命中接受接口的超时检查', false, '三次均被定时任务先取消，未验证到接口分支')
 }
 
 async function main() {

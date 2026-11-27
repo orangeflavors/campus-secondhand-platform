@@ -146,6 +146,10 @@ public class OrderService {
         }
 
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expireAt = order.getExpireAt();
+        if (expireAt != null && !expireAt.isAfter(now)) {
+            throw BizException.conflict("该请求已超时，无法接受");
+        }
         order.setStatus(TradeConst.ORDER_DELIVERING);
         order.setAcceptedAt(now);
         orderMapper.update(order);
